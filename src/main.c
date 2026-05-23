@@ -3,38 +3,27 @@
 #include <unistd.h>
 
 
-void printText();
+void* printText(void* seconds);
 
 int main() {
     
-    // int x = 29;
-    // int y = 468;
+    int s1 = 10, s2 = 15;
     pthread_t thread1;
     pthread_t thread2;
     
-    pthread_create(&thread1, NULL, (void (*)())&printText, (void*)NULL);
-    pthread_create(&thread2, NULL, (void (*)())&printText, (void*)NULL);
-
+    pthread_create(&thread1, NULL, (void* (*)(void*))&printText, (void*)&s1);
+    pthread_create(&thread2, NULL, (void* (*)(void*))&printText, (void*)&s2);
+    
 
     pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
     return 0;
 }
 
-void printText() {
-    static int counter = 0;
-    int local_counter;
-    // if(counter%2) {
-    //     printf("counter == %d \n", counter);
-    //     sleep(1);
-    // }
-    local_counter = ++counter;
-    
-    // printf("the passed arg to function via pthread_create (before): %d\n", *(int*)arg);
-    // *(int*)arg *= 10;
-    // printf("the passed arg to function via pthread_create (after): %d\n", *(int*)arg);
-
-    while (1) {
-        printf("Hello there!%d\n", local_counter);
+void* printText(void* seconds) {
+    int secs = *(int*)seconds;    //copy value
+    for (int i = 1; i <= secs; i++) {
+        printf("i= %d\n", i);
         sleep(1);
     }
 
